@@ -2,7 +2,7 @@
 
 Personal portfolio website showcasing AI/ML projects, skills, and experience in Generative AI, RAG, Agentic AI, and Python development.
 
-**Live site:** [muhammad-haris.vercel.app](https://muhammad-haris.vercel.app) *(update after deployment)*
+**Live site:** [muhammad-haris.vercel.app](https://portfolio-website-opal-two-53.vercel.app/)
 
 ## Tech Stack
 
