@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://muhammad-haris.vercel.app/sitemap.xml
+Sitemap: https://portfolio-website-opal-two-53.vercel.app/sitemap.xml
