@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ExternalLink } from "lucide-react";
 import { GitHubIcon } from "../ui/SocialIcons";
@@ -6,10 +6,29 @@ import type { Project } from "../../data/projects";
 import { OptimizedImage } from "../ui/OptimizedImage";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { ArchitectureStack } from "./ArchitectureStack";
+import { ScreenshotGallery } from "./ScreenshotGallery";
 
 interface ProjectModalProps {
   project: Project | null;
   onClose: () => void;
+}
+
+function ModalSection({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <div>
+      <h3 className="mb-1 text-sm font-semibold uppercase tracking-wider text-accent">
+        {title}
+      </h3>
+      {children}
+    </div>
+  );
 }
 
 export function ProjectModal({ project, onClose }: ProjectModalProps) {
@@ -66,10 +85,38 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
             </div>
 
             <div className="p-6 sm:p-8">
+              {project.category && (
+                <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-muted">
+                  {project.category}
+                </p>
+              )}
               <h2 id="modal-title" className="text-2xl font-bold text-text-primary">
                 {project.title}
               </h2>
               <p className="mt-2 text-text-secondary">{project.description}</p>
+
+              {(project.role || project.team || project.projectType) && (
+                <div className="mt-4 space-y-1 text-sm text-text-secondary">
+                  {project.role && (
+                    <p>
+                      <span className="text-text-muted">Role: </span>
+                      {project.role}
+                    </p>
+                  )}
+                  {project.team && (
+                    <p>
+                      <span className="text-text-muted">Team: </span>
+                      {project.team}
+                    </p>
+                  )}
+                  {project.projectType && (
+                    <p>
+                      <span className="text-text-muted">Project: </span>
+                      {project.projectType}
+                    </p>
+                  )}
+                </div>
+              )}
 
               <div className="mt-4 flex flex-wrap gap-2">
                 {project.technologies.map((tech, i) => (
@@ -79,31 +126,75 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                 ))}
               </div>
 
-              <div className="mt-6 space-y-4">
-                <div>
-                  <h3 className="mb-1 text-sm font-semibold uppercase tracking-wider text-accent">
-                    Problem
-                  </h3>
-                  <p className="text-sm text-text-secondary">{project.modal.problem}</p>
-                </div>
-                <div>
-                  <h3 className="mb-1 text-sm font-semibold uppercase tracking-wider text-accent">
-                    Solution
-                  </h3>
-                  <p className="text-sm text-text-secondary">{project.modal.solution}</p>
-                </div>
-                <div>
-                  <h3 className="mb-1 text-sm font-semibold uppercase tracking-wider text-accent">
-                    Architecture
-                  </h3>
-                  <p className="text-sm font-mono text-text-secondary">
-                    {project.modal.architecture}
+              {project.designPatterns && project.designPatterns.length > 0 && (
+                <div className="mt-4">
+                  <p className="mb-2 text-xs font-medium uppercase tracking-wide text-text-muted">
+                    Design Patterns
                   </p>
+                  <div className="flex flex-wrap gap-2">
+                    {project.designPatterns.map((pattern, i) => (
+                      <Badge key={pattern} index={i}>
+                        {pattern}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="mb-1 text-sm font-semibold uppercase tracking-wider text-accent">
-                    Challenges
-                  </h3>
+              )}
+
+              {project.screenshots && project.screenshots.length > 1 && (
+                <div className="mt-6">
+                  <ModalSection title="Screenshots">
+                    <ScreenshotGallery
+                      screenshots={project.screenshots}
+                      projectTitle={project.title}
+                    />
+                  </ModalSection>
+                </div>
+              )}
+
+              <div className="mt-6 space-y-4">
+                <ModalSection title="Overview">
+                  <p className="text-sm text-text-secondary">{project.modal.problem}</p>
+                </ModalSection>
+
+                <ModalSection title="Solution">
+                  <p className="text-sm text-text-secondary">{project.modal.solution}</p>
+                </ModalSection>
+
+                {project.architectureLayers && project.architectureLayers.length > 0 && (
+                  <ModalSection title="Architecture">
+                    <ArchitectureStack layers={project.architectureLayers} />
+                    <p className="mt-3 text-sm font-mono text-text-secondary">
+                      {project.modal.architecture}
+                    </p>
+                  </ModalSection>
+                )}
+
+                {!project.architectureLayers && (
+                  <ModalSection title="Architecture">
+                    <p className="text-sm font-mono text-text-secondary">
+                      {project.modal.architecture}
+                    </p>
+                  </ModalSection>
+                )}
+
+                {project.modal.features && project.modal.features.length > 0 && (
+                  <ModalSection title="Key Features">
+                    <ul className="grid gap-1 sm:grid-cols-2">
+                      {project.modal.features.map((feature) => (
+                        <li
+                          key={feature}
+                          className="flex items-start gap-2 text-sm text-text-secondary"
+                        >
+                          <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </ModalSection>
+                )}
+
+                <ModalSection title="Challenges">
                   <ul className="space-y-1">
                     {project.modal.challenges.map((c) => (
                       <li key={c} className="flex items-start gap-2 text-sm text-text-secondary">
@@ -112,11 +203,9 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                       </li>
                     ))}
                   </ul>
-                </div>
-                <div>
-                  <h3 className="mb-1 text-sm font-semibold uppercase tracking-wider text-accent">
-                    Results
-                  </h3>
+                </ModalSection>
+
+                <ModalSection title="Results">
                   <ul className="space-y-1">
                     {project.modal.results.map((r) => (
                       <li key={r} className="flex items-start gap-2 text-sm text-text-secondary">
@@ -125,13 +214,13 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </ModalSection>
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3">
                 {project.github && (
                   <Button href={project.github} target="_blank" rel="noopener noreferrer">
-                    <GitHubIcon className="h-4 w-4" /> GitHub
+                    <GitHubIcon className="h-4 w-4" /> View on GitHub
                   </Button>
                 )}
                 {project.liveDemo && (

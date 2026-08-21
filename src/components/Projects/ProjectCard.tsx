@@ -46,9 +46,19 @@ export function ProjectCard({ project, index, onOpen }: ProjectCardProps) {
 
       <div className="p-6">
         <div className="mb-3 flex items-start justify-between gap-4">
-          <h3 className="text-xl font-semibold text-text-primary transition-colors group-hover:text-accent-light">
-            {project.title}
-          </h3>
+          <div className="min-w-0">
+            {project.category && (
+              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-muted">
+                {project.category}
+              </p>
+            )}
+            <h3 className="text-xl font-semibold text-text-primary transition-colors group-hover:text-accent-light">
+              {project.title}
+            </h3>
+            {project.role && (
+              <p className="mt-1 text-xs text-accent">{project.role}</p>
+            )}
+          </div>
           <ArrowUpRight className="h-5 w-5 shrink-0 text-text-muted transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent-light" />
         </div>
 
@@ -77,6 +87,13 @@ export function ProjectCard({ project, index, onOpen }: ProjectCardProps) {
         </div>
 
         <div className="flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
+          <Button
+            variant="ghost"
+            className="text-xs px-3 py-1.5"
+            onClick={() => onOpen(project)}
+          >
+            View Details
+          </Button>
           {project.github && (
             <Button
               variant="outline"

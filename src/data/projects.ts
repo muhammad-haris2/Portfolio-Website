@@ -1,3 +1,9 @@
+export interface ProjectScreenshot {
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -8,16 +14,128 @@ export interface Project {
   github?: string;
   liveDemo?: string;
   featured?: boolean;
+  role?: string;
+  category?: string;
+  team?: string;
+  projectType?: string;
+  designPatterns?: string[];
+  architectureLayers?: string[];
+  screenshots?: ProjectScreenshot[];
   modal: {
     problem: string;
     solution: string;
     architecture: string;
     challenges: string[];
     results: string[];
+    features?: string[];
   };
 }
 
 export const projects: Project[] = [
+  {
+    id: "scms",
+    title: "Smart Coworking Space Management System (SCMS)",
+    description:
+      "A full-featured desktop application for managing coworking spaces — members, workspaces, bookings, subscriptions, billing, and administrative operations.",
+    category: "Desktop Application / Software Engineering",
+    role: "Scrum Master · Developer · Analyst",
+    team: "Trinova Tech",
+    projectType: "University Software Engineering Project — Spring 2026",
+    technologies: [
+      "Java 17",
+      "Java Swing",
+      "Maven",
+      "SQL Server",
+      "JDBC",
+      "jBCrypt",
+      "Apache PDFBox",
+      "Apache POI",
+      "JUnit 5",
+    ],
+    designPatterns: ["MVC", "DAO", "Service Layer", "Singleton", "Factory Method"],
+    architectureLayers: [
+      "UI / View Layer",
+      "Service Layer",
+      "DAO / Data Layer",
+      "SQL Server Database",
+    ],
+    highlights: [
+      "Secure member registration & authentication",
+      "Workspace booking & cancellation",
+      "Subscription plans & promo codes",
+      "Invoice generation & payment processing",
+    ],
+    image: "/images/projects/scms/overview.png",
+    github: "https://github.com/muhammad-haris2/Smart-Coworking-Space-Management-System",
+    screenshots: [
+      {
+        src: "/images/projects/scms/overview.png",
+        alt: "SCMS application overview",
+        caption: "Overview",
+      },
+      {
+        src: "/images/projects/scms/login.png",
+        alt: "SCMS login and authentication screen",
+        caption: "Authentication",
+      },
+      {
+        src: "/images/projects/scms/member-dashboard.png",
+        alt: "SCMS member dashboard",
+        caption: "Member Dashboard",
+      },
+      {
+        src: "/images/projects/scms/booking.png",
+        alt: "SCMS workspace booking interface",
+        caption: "Booking",
+      },
+      {
+        src: "/images/projects/scms/admin-dashboard.png",
+        alt: "SCMS admin dashboard",
+        caption: "Admin Dashboard",
+      },
+    ],
+    modal: {
+      problem:
+        "Coworking spaces need a centralized system to manage members, workspace availability, bookings, subscriptions, billing, and administrative reporting across separate member and admin roles.",
+      solution:
+        "Built SCMS as a Java Swing desktop application with layered architecture (MVC + Service + DAO), SQL Server persistence, and role-based dashboards for members and administrators.",
+      architecture:
+        "UI / View Layer → Service Layer → DAO / Data Layer → SQL Server Database. Patterns: MVC, DAO, Service Layer, Singleton, Factory Method.",
+      features: [
+        "Secure member registration and authentication",
+        "Password reset and account management",
+        "Coworking space / room browsing",
+        "Workspace booking and cancellation",
+        "Booking history",
+        "Subscription plans",
+        "Promo codes",
+        "Smart booking cost calculation",
+        "Facility/add-on management",
+        "Invoice generation",
+        "Payment processing",
+        "Member dashboard",
+        "Admin dashboard",
+        "Occupancy reporting",
+        "Member directory",
+        "Report export",
+        "Role-based functionality",
+        "Database-backed persistence",
+        "Unit testing with JUnit 5",
+      ],
+      challenges: [
+        "Designing clean separation across View, Service, and DAO layers",
+        "Implementing secure authentication with password hashing (jBCrypt)",
+        "Coordinating booking logic with subscriptions, promo codes, and cost calculation",
+        "Building reliable invoice generation and report export (PDFBox / POI)",
+      ],
+      results: [
+        "End-to-end coworking space management workflow",
+        "Separate member and admin role-based experiences",
+        "Database-backed persistence with SQL Server",
+        "Unit test coverage with JUnit 5",
+      ],
+    },
+  },
   {
     id: "ai-career-assistant",
     title: "AI Career Assistant — Multi-Agent System",

@@ -14,7 +14,7 @@ export function Projects() {
         <SectionHeading
           label="Portfolio"
           title="Featured Projects"
-          description="End-to-end AI systems — from multi-agent orchestration and RAG pipelines to machine learning applications."
+          description="End-to-end AI systems and software engineering projects — from multi-agent orchestration and RAG pipelines to desktop applications."
         />
 
         <div className="grid gap-6 lg:grid-cols-2">
