@@ -164,6 +164,25 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                 {project.architectureLayers && project.architectureLayers.length > 0 && (
                   <ModalSection title="Architecture">
                     <ArchitectureStack layers={project.architectureLayers} />
+                    {project.architectureServices && project.architectureServices.length > 0 && (
+                      <div className="mt-4 flex flex-col items-center gap-2">
+                        <div className="flex items-center gap-2 text-xs text-text-muted" aria-hidden="true">
+                          <div className="h-px w-8 bg-border" />
+                          <span>↔</span>
+                          <div className="h-px w-8 bg-border" />
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-2">
+                          {project.architectureServices.map((service) => (
+                            <span
+                              key={service}
+                              className="rounded-lg border border-accent/30 bg-accent-subtle px-3 py-1.5 text-xs font-medium text-accent-light"
+                            >
+                              {service}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     <p className="mt-3 text-sm font-mono text-text-secondary">
                       {project.modal.architecture}
                     </p>
@@ -176,6 +195,26 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                       {project.modal.architecture}
                     </p>
                   </ModalSection>
+                )}
+
+                {project.featureGroups && project.featureGroups.length > 0 && (
+                  <>
+                    {project.featureGroups.map((group) => (
+                      <ModalSection key={group.title} title={group.title}>
+                        <ul className="space-y-1">
+                          {group.items.map((item) => (
+                            <li
+                              key={item}
+                              className="flex items-start gap-2 text-sm text-text-secondary"
+                            >
+                              <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </ModalSection>
+                    ))}
+                  </>
                 )}
 
                 {project.modal.features && project.modal.features.length > 0 && (

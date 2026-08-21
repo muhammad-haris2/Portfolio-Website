@@ -4,6 +4,11 @@ export interface ProjectScreenshot {
   caption?: string;
 }
 
+export interface ProjectFeatureGroup {
+  title: string;
+  items: string[];
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -20,7 +25,9 @@ export interface Project {
   projectType?: string;
   designPatterns?: string[];
   architectureLayers?: string[];
+  architectureServices?: string[];
   screenshots?: ProjectScreenshot[];
+  featureGroups?: ProjectFeatureGroup[];
   modal: {
     problem: string;
     solution: string;
@@ -133,6 +140,114 @@ export const projects: Project[] = [
         "Separate member and admin role-based experiences",
         "Database-backed persistence with SQL Server",
         "Unit test coverage with JUnit 5",
+      ],
+    },
+  },
+  {
+    id: "autocare-hub",
+    title: "AutoCare Hub — Vehicle Services Marketplace",
+    description:
+      "Full-stack Android marketplace connecting vehicle owners with workshops and mechanics for service discovery, booking, communication, and repair tracking.",
+    category: "Mobile Application / Full-Stack Android",
+    role: "Android Developer / Full-Stack Developer",
+    projectType: "Final Semester Project — Software for Mobile Devices · FAST-NUCES",
+    technologies: [
+      "Kotlin",
+      "Android XML",
+      "PHP",
+      "MySQL",
+      "Retrofit 2",
+      "OkHttp",
+      "Firebase FCM",
+      "MVVM",
+      "Glide",
+      "XAMPP",
+    ],
+    designPatterns: ["MVVM"],
+    architectureLayers: [
+      "Android UI",
+      "MVVM Architecture",
+      "Retrofit / OkHttp",
+      "PHP REST API",
+      "MySQL Database",
+    ],
+    architectureServices: ["Firebase Cloud Messaging (FCM) — push notifications"],
+    highlights: [
+      "Workshop discovery with search & filters",
+      "Service booking with status tracking",
+      "In-app customer/provider chat",
+      "Provider booking & earnings management",
+    ],
+    image: "/images/projects/autocare-hub/home.png",
+    screenshots: [
+      {
+        src: "/images/projects/autocare-hub/home.png",
+        alt: "AutoCare Hub home screen",
+        caption: "Home",
+      },
+      {
+        src: "/images/projects/autocare-hub/workshops.png",
+        alt: "AutoCare Hub workshop discovery",
+        caption: "Workshops",
+      },
+      {
+        src: "/images/projects/autocare-hub/booking.png",
+        alt: "AutoCare Hub service booking",
+        caption: "Booking",
+      },
+      {
+        src: "/images/projects/autocare-hub/chat.png",
+        alt: "AutoCare Hub in-app chat",
+        caption: "Chat",
+      },
+      {
+        src: "/images/projects/autocare-hub/provider-dashboard.png",
+        alt: "AutoCare Hub provider dashboard",
+        caption: "Provider Dashboard",
+      },
+    ],
+    featureGroups: [
+      {
+        title: "Customer Module",
+        items: [
+          "Workshop discovery",
+          "Search and filtering by service, location and rating",
+          "Service booking with date, time and vehicle details",
+          "Booking status tracking",
+          "In-app customer/provider chat",
+          "Vehicle and profile management",
+        ],
+      },
+      {
+        title: "Provider Module",
+        items: [
+          "Booking management",
+          "Accept/reject booking requests",
+          "Service and spare-parts management",
+          "Enable/disable service visibility",
+          "Earnings tracking",
+          "Push notifications for bookings and messages",
+        ],
+      },
+    ],
+    modal: {
+      problem:
+        "Vehicle owners need a convenient way to discover workshops, book services, and track repairs, while service providers require tools to manage bookings, inventory, and customer communication.",
+      solution:
+        "Built AutoCare Hub as a full-stack Android application with MVVM architecture, PHP REST API backend, MySQL persistence, and Firebase Cloud Messaging for real-time notifications.",
+      architecture:
+        "Android UI → MVVM → Retrofit/OkHttp → PHP REST API → MySQL. Firebase Cloud Messaging handles push notifications for bookings and messages.",
+      challenges: [
+        "Integrating Retrofit with PHP REST endpoints and handling API error states",
+        "Implementing real-time booking status updates across customer and provider views",
+        "Managing FCM push notifications for booking events and chat messages",
+        "Handling image uploads with Base64 encoding and Glide display",
+      ],
+      results: [
+        "End-to-end vehicle service marketplace on Android",
+        "Separate customer and provider module experiences",
+        "Real-time communication via in-app chat and FCM notifications",
+        "Full-stack integration: Android + PHP + MySQL",
       ],
     },
   },
