@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ExternalLink } from "lucide-react";
 import { GitHubIcon } from "../ui/SocialIcons";
@@ -6,8 +6,6 @@ import type { Project } from "../../data/projects";
 import { OptimizedImage } from "../ui/OptimizedImage";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
-import { ArchitectureStack } from "./ArchitectureStack";
-import { ScreenshotGallery } from "./ScreenshotGallery";
 
 interface ProjectModalProps {
   project: Project | null;
@@ -32,6 +30,8 @@ function ModalSection({
 }
 
 export function ProjectModal({ project, onClose }: ProjectModalProps) {
+  const overlayRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -40,6 +40,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
     if (project) {
       document.body.style.overflow = "hidden";
       window.addEventListener("keydown", handleEscape);
+      overlayRef.current?.scrollTo(0, 0);
     }
 
     return () => {
@@ -52,10 +53,11 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
     <AnimatePresence>
       {project && (
         <motion.div
+          ref={overlayRef}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/70 p-4 backdrop-blur-sm sm:items-center sm:p-6"
+          className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/70 p-4 pt-6 backdrop-blur-sm sm:p-6 sm:pt-8"
           onClick={onClose}
           role="dialog"
           aria-modal="true"
@@ -96,26 +98,26 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               <p className="mt-2 text-text-secondary">{project.description}</p>
 
               {(project.role || project.team || project.projectType) && (
-                <div className="mt-4 space-y-1 text-sm text-text-secondary">
+                <dl className="mt-4 space-y-1 text-sm text-text-secondary">
                   {project.role && (
-                    <p>
-                      <span className="text-text-muted">Role: </span>
-                      {project.role}
-                    </p>
+                    <div>
+                      <dt className="inline text-text-muted">Role: </dt>
+                      <dd className="inline">{project.role}</dd>
+                    </div>
                   )}
                   {project.team && (
-                    <p>
-                      <span className="text-text-muted">Team: </span>
-                      {project.team}
-                    </p>
+                    <div>
+                      <dt className="inline text-text-muted">Team: </dt>
+                      <dd className="inline">{project.team}</dd>
+                    </div>
                   )}
                   {project.projectType && (
-                    <p>
-                      <span className="text-text-muted">Project: </span>
-                      {project.projectType}
-                    </p>
+                    <div>
+                      <dt className="inline text-text-muted">Project: </dt>
+                      <dd className="inline">{project.projectType}</dd>
+                    </div>
                   )}
-                </div>
+                </dl>
               )}
 
               <div className="mt-4 flex flex-wrap gap-2">
@@ -126,32 +128,6 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                 ))}
               </div>
 
-              {project.designPatterns && project.designPatterns.length > 0 && (
-                <div className="mt-4">
-                  <p className="mb-2 text-xs font-medium uppercase tracking-wide text-text-muted">
-                    Design Patterns
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.designPatterns.map((pattern, i) => (
-                      <Badge key={pattern} index={i}>
-                        {pattern}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {project.screenshots && project.screenshots.length > 1 && (
-                <div className="mt-6">
-                  <ModalSection title="Screenshots">
-                    <ScreenshotGallery
-                      screenshots={project.screenshots}
-                      projectTitle={project.title}
-                    />
-                  </ModalSection>
-                </div>
-              )}
-
               <div className="mt-6 space-y-4">
                 <ModalSection title="Overview">
                   <p className="text-sm text-text-secondary">{project.modal.problem}</p>
@@ -161,61 +137,11 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                   <p className="text-sm text-text-secondary">{project.modal.solution}</p>
                 </ModalSection>
 
-                {project.architectureLayers && project.architectureLayers.length > 0 && (
-                  <ModalSection title="Architecture">
-                    <ArchitectureStack layers={project.architectureLayers} />
-                    {project.architectureServices && project.architectureServices.length > 0 && (
-                      <div className="mt-4 flex flex-col items-center gap-2">
-                        <div className="flex items-center gap-2 text-xs text-text-muted" aria-hidden="true">
-                          <div className="h-px w-8 bg-border" />
-                          <span>↔</span>
-                          <div className="h-px w-8 bg-border" />
-                        </div>
-                        <div className="flex flex-wrap justify-center gap-2">
-                          {project.architectureServices.map((service) => (
-                            <span
-                              key={service}
-                              className="rounded-lg border border-accent/30 bg-accent-subtle px-3 py-1.5 text-xs font-medium text-accent-light"
-                            >
-                              {service}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    <p className="mt-3 text-sm font-mono text-text-secondary">
-                      {project.modal.architecture}
-                    </p>
-                  </ModalSection>
-                )}
-
-                {!project.architectureLayers && (
-                  <ModalSection title="Architecture">
-                    <p className="text-sm font-mono text-text-secondary">
-                      {project.modal.architecture}
-                    </p>
-                  </ModalSection>
-                )}
-
-                {project.featureGroups && project.featureGroups.length > 0 && (
-                  <>
-                    {project.featureGroups.map((group) => (
-                      <ModalSection key={group.title} title={group.title}>
-                        <ul className="space-y-1">
-                          {group.items.map((item) => (
-                            <li
-                              key={item}
-                              className="flex items-start gap-2 text-sm text-text-secondary"
-                            >
-                              <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </ModalSection>
-                    ))}
-                  </>
-                )}
+                <ModalSection title="Architecture">
+                  <p className="text-sm font-mono text-text-secondary">
+                    {project.modal.architecture}
+                  </p>
+                </ModalSection>
 
                 {project.modal.features && project.modal.features.length > 0 && (
                   <ModalSection title="Key Features">

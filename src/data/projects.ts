@@ -1,14 +1,3 @@
-export interface ProjectScreenshot {
-  src: string;
-  alt: string;
-  caption?: string;
-}
-
-export interface ProjectFeatureGroup {
-  title: string;
-  items: string[];
-}
-
 export interface Project {
   id: string;
   title: string;
@@ -23,11 +12,6 @@ export interface Project {
   category?: string;
   team?: string;
   projectType?: string;
-  designPatterns?: string[];
-  architectureLayers?: string[];
-  architectureServices?: string[];
-  screenshots?: ProjectScreenshot[];
-  featureGroups?: ProjectFeatureGroup[];
   modal: {
     problem: string;
     solution: string;
@@ -59,48 +43,14 @@ export const projects: Project[] = [
       "Apache POI",
       "JUnit 5",
     ],
-    designPatterns: ["MVC", "DAO", "Service Layer", "Singleton", "Factory Method"],
-    architectureLayers: [
-      "UI / View Layer",
-      "Service Layer",
-      "DAO / Data Layer",
-      "SQL Server Database",
-    ],
     highlights: [
       "Secure member registration & authentication",
       "Workspace booking & cancellation",
       "Subscription plans & promo codes",
       "Invoice generation & payment processing",
     ],
-    image: "/images/projects/scms/overview.png",
+    image: "/images/projects/scms.jpg",
     github: "https://github.com/muhammad-haris2/Smart-Coworking-Space-Management-System",
-    screenshots: [
-      {
-        src: "/images/projects/scms/overview.png",
-        alt: "SCMS application overview",
-        caption: "Overview",
-      },
-      {
-        src: "/images/projects/scms/login.png",
-        alt: "SCMS login and authentication screen",
-        caption: "Authentication",
-      },
-      {
-        src: "/images/projects/scms/member-dashboard.png",
-        alt: "SCMS member dashboard",
-        caption: "Member Dashboard",
-      },
-      {
-        src: "/images/projects/scms/booking.png",
-        alt: "SCMS workspace booking interface",
-        caption: "Booking",
-      },
-      {
-        src: "/images/projects/scms/admin-dashboard.png",
-        alt: "SCMS admin dashboard",
-        caption: "Admin Dashboard",
-      },
-    ],
     modal: {
       problem:
         "Coworking spaces need a centralized system to manage members, workspace availability, bookings, subscriptions, billing, and administrative reporting across separate member and admin roles.",
@@ -108,27 +58,6 @@ export const projects: Project[] = [
         "Built SCMS as a Java Swing desktop application with layered architecture (MVC + Service + DAO), SQL Server persistence, and role-based dashboards for members and administrators.",
       architecture:
         "UI / View Layer → Service Layer → DAO / Data Layer → SQL Server Database. Patterns: MVC, DAO, Service Layer, Singleton, Factory Method.",
-      features: [
-        "Secure member registration and authentication",
-        "Password reset and account management",
-        "Coworking space / room browsing",
-        "Workspace booking and cancellation",
-        "Booking history",
-        "Subscription plans",
-        "Promo codes",
-        "Smart booking cost calculation",
-        "Facility/add-on management",
-        "Invoice generation",
-        "Payment processing",
-        "Member dashboard",
-        "Admin dashboard",
-        "Occupancy reporting",
-        "Member directory",
-        "Report export",
-        "Role-based functionality",
-        "Database-backed persistence",
-        "Unit testing with JUnit 5",
-      ],
       challenges: [
         "Designing clean separation across View, Service, and DAO layers",
         "Implementing secure authentication with password hashing (jBCrypt)",
@@ -163,73 +92,13 @@ export const projects: Project[] = [
       "Glide",
       "XAMPP",
     ],
-    designPatterns: ["MVVM"],
-    architectureLayers: [
-      "Android UI",
-      "MVVM Architecture",
-      "Retrofit / OkHttp",
-      "PHP REST API",
-      "MySQL Database",
-    ],
-    architectureServices: ["Firebase Cloud Messaging (FCM) — push notifications"],
     highlights: [
       "Workshop discovery with search & filters",
       "Service booking with status tracking",
       "In-app customer/provider chat",
       "Provider booking & earnings management",
     ],
-    image: "/images/projects/autocare-hub/home.png",
-    screenshots: [
-      {
-        src: "/images/projects/autocare-hub/home.png",
-        alt: "AutoCare Hub home screen",
-        caption: "Home",
-      },
-      {
-        src: "/images/projects/autocare-hub/workshops.png",
-        alt: "AutoCare Hub workshop discovery",
-        caption: "Workshops",
-      },
-      {
-        src: "/images/projects/autocare-hub/booking.png",
-        alt: "AutoCare Hub service booking",
-        caption: "Booking",
-      },
-      {
-        src: "/images/projects/autocare-hub/chat.png",
-        alt: "AutoCare Hub in-app chat",
-        caption: "Chat",
-      },
-      {
-        src: "/images/projects/autocare-hub/provider-dashboard.png",
-        alt: "AutoCare Hub provider dashboard",
-        caption: "Provider Dashboard",
-      },
-    ],
-    featureGroups: [
-      {
-        title: "Customer Module",
-        items: [
-          "Workshop discovery",
-          "Search and filtering by service, location and rating",
-          "Service booking with date, time and vehicle details",
-          "Booking status tracking",
-          "In-app customer/provider chat",
-          "Vehicle and profile management",
-        ],
-      },
-      {
-        title: "Provider Module",
-        items: [
-          "Booking management",
-          "Accept/reject booking requests",
-          "Service and spare-parts management",
-          "Enable/disable service visibility",
-          "Earnings tracking",
-          "Push notifications for bookings and messages",
-        ],
-      },
-    ],
+    image: "/images/projects/autocare-hub.jpg",
     modal: {
       problem:
         "Vehicle owners need a convenient way to discover workshops, book services, and track repairs, while service providers require tools to manage bookings, inventory, and customer communication.",

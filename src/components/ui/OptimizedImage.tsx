@@ -7,7 +7,8 @@ interface OptimizedImageProps {
   alt: string;
   className?: string;
   containerClassName?: string;
-  aspectRatio?: "video" | "square" | "portrait";
+  aspectRatio?: "video" | "square" | "portrait" | "auto";
+  objectFit?: "cover" | "contain";
 }
 
 export function OptimizedImage({
@@ -16,6 +17,7 @@ export function OptimizedImage({
   className,
   containerClassName,
   aspectRatio = "video",
+  objectFit = "cover",
 }: OptimizedImageProps) {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -24,7 +26,10 @@ export function OptimizedImage({
     video: "aspect-video",
     square: "aspect-square",
     portrait: "aspect-[3/4]",
+    auto: "",
   };
+
+  const fitClass = objectFit === "contain" ? "object-contain" : "object-cover";
 
   if (error) {
     return (
@@ -64,7 +69,10 @@ export function OptimizedImage({
         onLoad={() => setLoaded(true)}
         onError={() => setError(true)}
         className={cn(
-          "h-full w-full object-cover transition-opacity duration-500",
+          "transition-opacity duration-500",
+          aspectRatio === "auto" && objectFit === "contain"
+            ? "max-h-full max-w-full object-contain"
+            : cn("h-full w-full", fitClass),
           loaded ? "opacity-100" : "opacity-0",
           className,
         )}
