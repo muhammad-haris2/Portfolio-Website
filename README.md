@@ -1,90 +1,113 @@
-# Muhammad Haris — AI Engineer Portfolio
+# Muhammad Haris — Engineering Portfolio
 
-Personal portfolio website showcasing AI/ML projects, skills, and experience in Generative AI, RAG, Agentic AI, and Python development.
+An editorial, case-study-led portfolio for Muhammad Haris, a Computer Science student at FAST-NUCES Islamabad working across applied AI, retrieval systems, intelligent agents, machine learning, Python backend development, and software engineering.
 
-**Live site:** [portfolio-website-opal-two-53.vercel.app](https://portfolio-website-opal-two-53.vercel.app)
+**Production:** [portfolio-website-opal-two-53.vercel.app](https://portfolio-website-opal-two-53.vercel.app/)
 
-## Tech Stack
+## Design
 
-- React 19 + TypeScript
-- Vite
+The visual system is built around “Editorial Engineering”: warm ivory paper, graphite ink, olive technical notation, copper accents, deliberate typography, and lightweight diagrams. The experience is light by default and uses a single dark section for rhythm. Project content is presented as engineering case studies instead of a generic card grid.
+
+## Stack and requirements
+
+- React 19 and TypeScript
+- Vite 8
 - Tailwind CSS v4
-- Framer Motion
-- React Three Fiber (3D hero visual)
+- Framer Motion for restrained entrance and dialog motion
+- Lucide React for interface icons
+- Node.js 20.19 or newer
+- npm (lockfile included)
 
-## Getting Started
+No WebGL runtime, CMS, state library, or backend server is required.
+
+## Local setup
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
+npm ci
 npm run dev
+```
 
-# Production build
+Common checks:
+
+```bash
+npm test
+npm run lint
 npm run build
-
-# Preview production build
 npm run preview
 ```
 
-## Project Structure
+The production build is written to `dist/`.
 
-```
+## Project structure
+
+```text
 src/
-├── components/   # UI sections (Hero, Projects, Contact, etc.)
-├── data/         # Portfolio content (projects, skills, personal info)
-├── hooks/        # Custom React hooks
-└── lib/          # Utilities
+├── components/
+│   ├── Hero/          # Editorial hero and SVG system schematic
+│   ├── Projects/      # Featured studies, project ledger, accessible dialog
+│   ├── About/         # Biography and engineering principles
+│   ├── Experience/    # Research internship and education
+│   ├── Skills/        # Evidence-led technical expertise index
+│   ├── Contact/       # Web3Forms contact experience
+│   ├── Navbar/        # Responsive navigation and scroll spy
+│   ├── Footer/
+│   └── ui/            # Shared button, label, and section-heading primitives
+├── data/              # Typed portfolio content
+├── hooks/             # Navigation scroll spy
+└── lib/               # Utilities and contact-form validation/payload helpers
+tests/                 # Contact form validation and provider-response checks
 public/
-├── images/       # Project screenshots
-├── resume.pdf    # Downloadable resume
-└── og-image.png  # Social share preview image
+├── images/projects/   # Project interface captures
+├── resume.pdf         # Downloadable résumé
+├── og-image.png       # 1200×630 social sharing image
+├── favicon.svg
+├── robots.txt
+└── sitemap.xml
 ```
 
-## Configuration
+## Content editing
 
-Copy `.env.example` to `.env` for optional features:
+- Personal details, social links, and résumé path: `src/data/personal.ts`
+- Featured and additional projects: `src/data/projects.ts`
+- Skills and technology groups: `src/data/skills.ts`
+- Internship and education: `src/data/journey.ts`
+
+Project facts should remain grounded in the linked repositories. Do not add metrics, deployments, or professional claims without supporting evidence.
+
+## Contact form / Web3Forms
+
+The contact form preserves the existing Web3Forms integration and sends a JSON `POST` request to `https://api.web3forms.com/submit`.
+
+Create a local `.env` file when testing with a real key:
 
 ```bash
-cp .env.example .env
+VITE_WEB3FORMS_ACCESS_KEY=your_access_key_here
 ```
 
-| Variable | Description |
-|---|---|
-| `VITE_WEB3FORMS_ACCESS_KEY` | Optional. Enables contact form email delivery via [Web3Forms](https://web3forms.com). Without it, the form opens the user's email client. |
+The same variable must be configured in the existing Vercel project for Preview and Production environments. Never commit the real key.
 
-On Vercel, add environment variables under **Project Settings → Environment Variables**.
+Behavior:
 
-## Updating Content
+- Name, email, and message are validated in the browser.
+- A submission is reported as successful only when the HTTP response is OK and Web3Forms returns `success: true`.
+- The button is disabled and guarded against duplicate requests while a submission is in flight.
+- Without a key, the form prepares a `mailto:` message and clearly labels that fallback; it does not claim delivery.
+- Provider failures show the direct email address.
 
-Edit data files — no component changes needed:
+Do not send a real test submission without the portfolio owner’s permission.
 
-- **Personal info & links:** `src/data/personal.ts`
-- **Projects:** `src/data/projects.ts`
-- **Skills:** `src/data/skills.ts`
-- **Journey timeline:** `src/data/journey.ts`
+## Vercel deployment
 
-## Deploy on Vercel
+The existing GitHub-connected Vercel project should keep these settings:
 
-1. Push this repo to GitHub
-2. Import the repository on [vercel.com](https://vercel.com)
-3. Use default settings:
-   - **Framework:** Vite
-   - **Build Command:** `npm run build`
-   - **Output Directory:** `dist`
-4. Deploy
+- Production branch: `main`
+- Framework preset: Vite
+- Build command: `npm run build`
+- Output directory: `dist`
+- Environment variable: `VITE_WEB3FORMS_ACCESS_KEY`
 
-After deployment, update these URLs if your Vercel domain differs:
-- `index.html` — `canonical`, `og:url`, `og:image`, `twitter:image`
-- `public/robots.txt` — sitemap URL
-- `public/sitemap.xml` — site URL
+The canonical URL, Open Graph metadata, `robots.txt`, and `sitemap.xml` already use the current production domain. Push a validated redesign branch first, review its preview deployment, and merge into `main` only after approval. Do not create a new Vercel project.
 
-## Author
+## Resume
 
-**Muhammad Haris** — AI Engineer & Generative AI Developer  
-Islamabad, Pakistan
-
-- [GitHub](https://github.com/muhammad-haris2)
-- [LinkedIn](https://linkedin.com/in/muhammad-haris-455166294)
-- [Email](mailto:haris101gbb@gmail.com)
+`public/resume.pdf` is a one-page PDF dated November 10, 2026 in its file metadata. No newer local résumé was found during the redesign, so the existing file was preserved.

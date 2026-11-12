@@ -1,157 +1,81 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, FileText } from "lucide-react";
-import { GitHubIcon, LinkedInIcon } from "../ui/SocialIcons";
+import { useEffect, useRef, useState } from "react";
+import { FileText, Menu, X } from "lucide-react";
 import { navLinks, personal } from "../../data/personal";
 import { useScrollSpy } from "../../hooks/useScrollSpy";
-import { cn, scrollToSection } from "../../lib/utils";
+import { scrollToSection } from "../../lib/utils";
+
+const sectionIds = ["home", ...navLinks.map((link) => link.id)];
 
 export function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const sectionIds = navLinks.map((link) => link.id);
-  const activeSection = useScrollSpy(sectionIds);
+  const [open, setOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const active = useScrollSpy(sectionIds, 130);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
+    document.body.classList.toggle("menu-open", open);
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+        menuButton.current?.focus();
+      }
     };
-  }, [mobileOpen]);
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.classList.remove("menu-open");
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
 
-  const handleNavClick = (id: string) => {
+  const navigate = (id: string) => {
+    setOpen(false);
     scrollToSection(id);
-    setMobileOpen(false);
   };
 
   return (
-    <header
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        scrolled ? "glass py-3 shadow-lg shadow-black/20" : "bg-transparent py-5",
-      )}
-    >
-      <nav className="section-container flex items-center justify-between" aria-label="Main navigation">
-        <button
-          onClick={() => handleNavClick("home")}
-          className="text-lg font-bold tracking-tight text-text-primary transition-colors hover:text-accent-light"
-          aria-label="Go to home"
-        >
-          MH<span className="text-accent">.</span>
+    <header className="site-header">
+      <nav className="nav-shell" aria-label="Primary navigation">
+        <button className="wordmark" onClick={() => navigate("home")} aria-label="Go to top">
+          <span>MH</span><i aria-hidden="true" />
         </button>
 
-        <ul className="hidden items-center gap-1 md:flex">
-          {navLinks.map((link) => (
-            <li key={link.id}>
-              <button
-                onClick={() => handleNavClick(link.id)}
-                className={cn(
-                  "rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200",
-                  activeSection === link.id
-                    ? "text-accent-light"
-                    : "text-text-secondary hover:text-text-primary",
-                )}
-              >
-                {link.label}
-              </button>
-            </li>
-          ))}
-        </ul>
-
-        <div className="hidden items-center gap-2 md:flex">
-          <a
-            href={personal.links.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-lg p-2 text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary"
-            aria-label="GitHub profile"
-          >
-            <GitHubIcon className="h-4 w-4" />
-          </a>
-          <a
-            href={personal.links.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-lg p-2 text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary"
-            aria-label="LinkedIn profile"
-          >
-            <LinkedInIcon className="h-4 w-4" />
-          </a>
-          <a
-            href={personal.links.resume}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm text-text-secondary transition-colors hover:border-border-hover hover:text-text-primary"
-            aria-label="View resume"
-          >
-            <FileText className="h-3.5 w-3.5" />
-            Resume
+        <div className="nav-desktop">
+          <ul>
+            {navLinks.map((link) => (
+              <li key={link.id}>
+                <button className={active === link.id ? "active" : ""} onClick={() => navigate(link.id)}>
+                  {link.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+          <a className="nav-resume" href={personal.links.resume} target="_blank" rel="noopener noreferrer">
+            Résumé <FileText size={14} aria-hidden="true" />
           </a>
         </div>
 
         <button
-          className="rounded-lg p-2 text-text-primary md:hidden"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-          aria-expanded={mobileOpen}
+          ref={menuButton}
+          className="menu-toggle"
+          onClick={() => setOpen((value) => !value)}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          aria-label={open ? "Close navigation" : "Open navigation"}
         >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
         </button>
       </nav>
 
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="glass border-t border-border md:hidden"
-          >
-            <ul className="section-container flex flex-col gap-1 py-4">
-              {navLinks.map((link) => (
-                <li key={link.id}>
-                  <button
-                    onClick={() => handleNavClick(link.id)}
-                    className={cn(
-                      "w-full rounded-lg px-4 py-3 text-left text-sm font-medium transition-colors",
-                      activeSection === link.id
-                        ? "bg-accent-subtle text-accent-light"
-                        : "text-text-secondary hover:bg-white/5 hover:text-text-primary",
-                    )}
-                  >
-                    {link.label}
-                  </button>
-                </li>
-              ))}
-              <li className="mt-2 flex gap-3 border-t border-border pt-4">
-                <a
-                  href={personal.links.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary"
-                >
-                  <GitHubIcon className="h-4 w-4" /> GitHub
-                </a>
-                <a
-                  href={personal.links.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary"
-                >
-                  <LinkedInIcon className="h-4 w-4" /> LinkedIn
-                </a>
-              </li>
-            </ul>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div id="mobile-menu" className={`mobile-menu ${open ? "is-open" : ""}`} aria-hidden={!open}>
+        <p className="kicker">Navigate</p>
+        {navLinks.map((link, index) => (
+          <button key={link.id} onClick={() => navigate(link.id)} tabIndex={open ? 0 : -1}>
+            <span>0{index + 1}</span>{link.label}
+          </button>
+        ))}
+        <a href={personal.links.resume} target="_blank" rel="noopener noreferrer" tabIndex={open ? 0 : -1}>
+          View résumé <FileText size={16} aria-hidden="true" />
+        </a>
+      </div>
     </header>
   );
 }

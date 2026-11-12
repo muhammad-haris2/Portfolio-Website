@@ -1,275 +1,155 @@
+export type VisualKind = "retrieval" | "agents" | "prediction" | "desktop" | "nlp" | "mobile";
+
 export interface Project {
   id: string;
+  number: string;
   title: string;
+  shortTitle: string;
   description: string;
+  problem: string;
+  contribution: string;
   technologies: string[];
   highlights: string[];
-  image: string;
+  image?: string;
+  imageAlt?: string;
   github?: string;
   liveDemo?: string;
-  featured?: boolean;
+  featured: boolean;
+  visual: VisualKind;
   role?: string;
-  category?: string;
-  team?: string;
-  projectType?: string;
-  modal: {
-    problem: string;
-    solution: string;
-    architecture: string;
-    challenges: string[];
-    results: string[];
-    features?: string[];
-  };
+  context?: string;
+  architecture: string[];
+  challenges: string[];
+  outcomes: string[];
 }
 
 export const projects: Project[] = [
   {
-    id: "scms",
-    title: "Smart Coworking Space Management System (SCMS)",
+    id: "ai-research-assistant",
+    number: "01",
+    title: "AI Research Assistant",
+    shortTitle: "Citation-aware research across multiple papers",
     description:
-      "A full-featured desktop application for managing coworking spaces — members, workspaces, bookings, subscriptions, billing, and administrative operations.",
-    category: "Desktop Application / Software Engineering",
-    role: "Scrum Master · Developer · Analyst",
-    team: "Trinova Tech",
-    projectType: "University Software Engineering Project — Spring 2026",
-    technologies: [
-      "Java 17",
-      "Java Swing",
-      "Maven",
-      "SQL Server",
-      "JDBC",
-      "jBCrypt",
-      "Apache PDFBox",
-      "Apache POI",
-      "JUnit 5",
-    ],
-    highlights: [
-      "Secure member registration & authentication",
-      "Workspace booking & cancellation",
-      "Subscription plans & promo codes",
-      "Invoice generation & payment processing",
-    ],
-    image: "/images/projects/scms.jpg",
-    github: "https://github.com/muhammad-haris2/Smart-Coworking-Space-Management-System",
-    modal: {
-      problem:
-        "Coworking spaces need a centralized system to manage members, workspace availability, bookings, subscriptions, billing, and administrative reporting across separate member and admin roles.",
-      solution:
-        "Built SCMS as a Java Swing desktop application with layered architecture (MVC + Service + DAO), SQL Server persistence, and role-based dashboards for members and administrators.",
-      architecture:
-        "UI / View Layer → Service Layer → DAO / Data Layer → SQL Server Database. Patterns: MVC, DAO, Service Layer, Singleton, Factory Method.",
-      challenges: [
-        "Designing clean separation across View, Service, and DAO layers",
-        "Implementing secure authentication with password hashing (jBCrypt)",
-        "Coordinating booking logic with subscriptions, promo codes, and cost calculation",
-        "Building reliable invoice generation and report export (PDFBox / POI)",
-      ],
-      results: [
-        "End-to-end coworking space management workflow",
-        "Separate member and admin role-based experiences",
-        "Database-backed persistence with SQL Server",
-        "Unit test coverage with JUnit 5",
-      ],
-    },
-  },
-  {
-    id: "autocare-hub",
-    title: "AutoCare Hub — Vehicle Services Marketplace",
-    description:
-      "Full-stack Android marketplace connecting vehicle owners with workshops and mechanics for service discovery, booking, communication, and repair tracking.",
-    category: "Mobile Application / Full-Stack Android",
-    role: "Android Developer / Full-Stack Developer",
-    projectType: "Final Semester Project — Software for Mobile Devices · FAST-NUCES",
-    technologies: [
-      "Kotlin",
-      "Android XML",
-      "PHP",
-      "MySQL",
-      "Retrofit 2",
-      "OkHttp",
-      "Firebase FCM",
-      "MVVM",
-      "Glide",
-      "XAMPP",
-    ],
-    highlights: [
-      "Workshop discovery with search & filters",
-      "Service booking with status tracking",
-      "In-app customer/provider chat",
-      "Provider booking & earnings management",
-    ],
-    image: "/images/projects/autocare-hub.jpg",
-    modal: {
-      problem:
-        "Vehicle owners need a convenient way to discover workshops, book services, and track repairs, while service providers require tools to manage bookings, inventory, and customer communication.",
-      solution:
-        "Built AutoCare Hub as a full-stack Android application with MVVM architecture, PHP REST API backend, MySQL persistence, and Firebase Cloud Messaging for real-time notifications.",
-      architecture:
-        "Android UI → MVVM → Retrofit/OkHttp → PHP REST API → MySQL. Firebase Cloud Messaging handles push notifications for bookings and messages.",
-      challenges: [
-        "Integrating Retrofit with PHP REST endpoints and handling API error states",
-        "Implementing real-time booking status updates across customer and provider views",
-        "Managing FCM push notifications for booking events and chat messages",
-        "Handling image uploads with Base64 encoding and Glide display",
-      ],
-      results: [
-        "End-to-end vehicle service marketplace on Android",
-        "Separate customer and provider module experiences",
-        "Real-time communication via in-app chat and FCM notifications",
-        "Full-stack integration: Android + PHP + MySQL",
-      ],
-    },
+      "A RAG application for asking grounded questions across academic PDFs, with hybrid retrieval, reranking, provenance, and explicit insufficient-evidence handling.",
+    problem:
+      "Researchers need answers that remain traceable to the source material, especially when a collection of papers contains conflicting or incomplete evidence.",
+    contribution:
+      "Designed and built the retrieval and generation workflow, FastAPI service, Streamlit interface, evaluation harness, and automated tests.",
+    technologies: ["Python", "LangGraph", "BM25", "Chroma", "FastAPI", "PyMuPDF"],
+    highlights: ["Hybrid sparse + dense retrieval", "Cross-encoder reranking", "Page-level citation validation", "Retrieval retry and grounding checks"],
+    image: "/images/projects/ai-research-assistant.jpg",
+    imageAlt: "AI Research Assistant interface showing paper ingestion and a cited answer",
+    github: "https://github.com/muhammad-haris2/ai-research-assistant",
+    featured: true,
+    visual: "retrieval",
+    role: "Independent project",
+    context: "Applied AI / RAG",
+    architecture: ["PDF ingestion", "Hybrid retrieval", "Reranking", "LangGraph", "Citation validation"],
+    challenges: ["Keeping page and document provenance intact through chunking and generation", "Balancing lexical and semantic retrieval for technical language", "Declining to answer when the retrieved context does not support a claim"],
+    outcomes: ["Multi-document questions with per-source attribution", "History-aware follow-ups and provenance resolution", "A testable service boundary between the interface and RAG workflow"],
   },
   {
     id: "ai-career-assistant",
-    title: "AI Career Assistant — Multi-Agent System",
+    number: "02",
+    title: "AI Career Assistant",
+    shortTitle: "Five agents, one structured career analysis",
     description:
-      "Multi-agent AI system that analyzes CVs and job descriptions, identifies skill gaps, builds personalized learning paths, and generates tailored cover letters.",
-    technologies: ["CrewAI", "Groq", "FastAPI", "Streamlit", "Tavily"],
-    highlights: [
-      "5-agent architecture",
-      "CV parsing & job description analysis",
-      "Skill-gap analysis",
-      "Learning path generation",
-      "Cover letter generation",
-    ],
+      "A multi-agent system that compares a CV with a job description, surfaces skill gaps, and produces a learning roadmap and tailored cover letter.",
+    problem: "Generic career advice rarely connects a candidate’s real experience to the specific requirements of a role.",
+    contribution: "Built the five-agent CrewAI workflow, FastAPI backend, document-processing path, and Streamlit experience.",
+    technologies: ["CrewAI", "Groq", "FastAPI", "Streamlit", "PyMuPDF", "Tavily"],
+    highlights: ["Five specialized agents", "Structured CV and job analysis", "Skill-gap comparison", "Parallel learning-path and cover-letter outputs"],
     image: "/images/projects/ai-career-assistant.jpg",
+    imageAlt: "AI Career Assistant interface showing CV and job-description analysis",
     github: "https://github.com/muhammad-haris2/ai-career-assistant",
     liveDemo: "https://ai-career-assistant-crewai.streamlit.app/",
     featured: true,
-    modal: {
-      problem:
-        "Job seekers struggle to align their skills with specific job requirements and lack personalized guidance for career development.",
-      solution:
-        "Built a multi-agent system using CrewAI with specialized agents for CV analysis, job matching, skill-gap identification, learning path creation, and cover letter generation.",
-      architecture:
-        "5-agent CrewAI pipeline orchestrated via FastAPI backend with Streamlit frontend. Agents communicate sequentially, sharing context through structured outputs.",
-      challenges: [
-        "Coordinating multiple agents with consistent context",
-        "Parsing diverse CV formats accurately",
-        "Generating actionable, personalized learning paths",
-      ],
-      results: [
-        "End-to-end career assistance pipeline",
-        "Automated skill-gap analysis",
-        "Personalized cover letter generation",
-      ],
-    },
-  },
-  {
-    id: "ai-research-assistant",
-    title: "AI Research Assistant — RAG Application",
-    description:
-      "End-to-end RAG application for researching multiple academic papers using hybrid retrieval and citation-aware generation.",
-    technologies: [
-      "LangChain",
-      "LangGraph",
-      "Groq",
-      "FastAPI",
-      "Chroma",
-      "Streamlit",
-      "Python",
-    ],
-    highlights: [
-      "Multi-document research",
-      "Hybrid BM25 + dense retrieval",
-      "Local embeddings",
-      "LangGraph workflow orchestration",
-      "Citation-aware responses",
-      "Provenance-aware follow-up questions",
-      "Insufficient-evidence handling",
-    ],
-    image: "/images/projects/ai-research-assistant.jpg",
-    github: "https://github.com/muhammad-haris2/ai-research-assistant",
-    featured: true,
-    modal: {
-      problem:
-        "Researchers need to efficiently analyze multiple academic papers and get accurate, citation-backed answers to complex questions.",
-      solution:
-        "Developed a RAG system with hybrid retrieval (BM25 + dense), LangGraph workflow orchestration, and citation validation for research-grade responses.",
-      architecture:
-        "Query → Analysis → Hybrid Retrieval → Reranking → Context Assembly → LLM Generation → Citation Validation → Response with provenance tracking.",
-      challenges: [
-        "Balancing sparse and dense retrieval for academic text",
-        "Ensuring citation accuracy and provenance",
-        "Handling insufficient evidence gracefully",
-      ],
-      results: [
-        "Multi-document research capability",
-        "Citation-aware answer generation",
-        "Robust follow-up question handling",
-      ],
-    },
-  },
-  {
-    id: "reading-comprehension",
-    title: "Reading Comprehension & Quiz Generation System",
-    description:
-      "Machine learning pipeline for automated quiz and distractor generation using the RACE dataset.",
-    technologies: ["Python", "Scikit-learn", "XGBoost", "NLTK"],
-    highlights: [
-      "87k+ passages",
-      "Automated quiz generation",
-      "Distractor generation",
-      "XGBoost classifier",
-      "Semi-supervised Label Propagation",
-      "Macro F1: 0.5284",
-    ],
-    image: "/images/projects/reading-comprehension.jpg",
-    github: "https://github.com/muhammad-haris2/race_rc_project",
-    modal: {
-      problem:
-        "Creating high-quality reading comprehension quizzes with plausible distractors is labor-intensive and requires NLP expertise.",
-      solution:
-        "Built an ML pipeline using XGBoost and semi-supervised Label Propagation on the RACE dataset for automated quiz and distractor generation.",
-      architecture:
-        "Data preprocessing → Feature extraction (TF-IDF, embeddings) → XGBoost classification → Label Propagation for semi-supervised learning → Quiz generation pipeline.",
-      challenges: [
-        "Generating plausible distractors that aren't trivially eliminable",
-        "Handling class imbalance in answer types",
-        "Scaling to 87k+ passages efficiently",
-      ],
-      results: [
-        "Macro F1 score of 0.5284",
-        "Automated quiz generation at scale",
-        "Effective semi-supervised learning approach",
-      ],
-    },
+    visual: "agents",
+    role: "Independent project",
+    context: "Agentic AI",
+    architecture: ["CV + role", "Parse", "Compare", "Plan", "Write"],
+    challenges: ["Passing consistent structured context between agents", "Extracting useful signals from differently formatted CVs", "Keeping recommendations tied to the supplied role rather than generic advice"],
+    outcomes: ["A single workflow from document upload to actionable outputs", "Separate reasoning responsibilities for extraction, comparison, planning, and writing", "A public demo backed by a FastAPI service"],
   },
   {
     id: "house-price-predictor",
+    number: "03",
     title: "Islamabad House Price Predictor",
+    shortTitle: "A local housing dataset turned into a usable ML product",
     description:
-      "Machine learning application for predicting Islamabad house prices using scraped real-estate listings.",
-    technologies: ["Python", "Scikit-learn", "FastAPI", "Selenium", "Streamlit"],
-    highlights: [
-      "1,600+ listings",
-      "100+ Islamabad locations",
-      "Gradient Boosting",
-      "93.2% R²",
-      "FastAPI backend",
-      "Streamlit interface",
-    ],
+      "A three-layer machine-learning application that prepares scraped property data, trains a Gradient Boosting model, and serves predictions through FastAPI and Streamlit.",
+    problem: "Islamabad property listings are fragmented and vary substantially by location, size, and listing quality.",
+    contribution: "Built the data collection, cleaning, training, API, and interface layers as one reproducible workflow.",
+    technologies: ["Python", "Selenium", "scikit-learn", "FastAPI", "Pydantic", "Streamlit"],
+    highlights: ["Zameen.com data collection", "Location-aware preprocessing", "Gradient Boosting regression", "Separated ML, API, and UI layers"],
     image: "/images/projects/house-price-predictor.jpg",
+    imageAlt: "Islamabad House Price Predictor interface with property inputs and estimate",
     github: "https://github.com/muhammad-haris2/islamabad-house-price-predictor",
     liveDemo: "https://islamabad-house-price-predictor.streamlit.app/",
-    modal: {
-      problem:
-        "Property buyers in Islamabad lack data-driven tools to estimate fair house prices across diverse neighborhoods.",
-      solution:
-        "Scraped 1,600+ real-estate listings across 100+ locations, trained a Gradient Boosting model, and deployed via FastAPI with a Streamlit interface.",
-      architecture:
-        "Selenium scraping → Data cleaning → Feature engineering → Gradient Boosting model → FastAPI prediction API → Streamlit frontend.",
-      challenges: [
-        "Handling diverse listing formats from multiple sources",
-        "Feature engineering for location-based pricing",
-        "Achieving high prediction accuracy across neighborhoods",
-      ],
-      results: [
-        "93.2% R² on test data",
-        "Coverage of 100+ Islamabad locations",
-        "Production-ready API and UI",
-      ],
-    },
+    featured: true,
+    visual: "prediction",
+    role: "Independent project",
+    context: "Machine learning",
+    architecture: ["Listings", "Clean + encode", "Train", "FastAPI", "Streamlit"],
+    challenges: ["Normalizing inconsistent property attributes and price formats", "Representing a large set of neighborhood categories", "Keeping training artifacts and the serving schema aligned"],
+    outcomes: ["Predictions across 100+ Islamabad locations", "API endpoints with typed request and response schemas", "A deployable interface for exploring model estimates"],
+  },
+  {
+    id: "scms",
+    number: "04",
+    title: "Smart Coworking Space Management System",
+    shortTitle: "Layered desktop software for a multi-role workspace",
+    description: "A Java desktop application for members, workspaces, bookings, subscriptions, billing, invoices, and administrative reporting.",
+    problem: "Coworking operations need coordinated booking, subscription, billing, and reporting workflows across member and administrator roles.",
+    contribution: "Worked as Scrum Master, developer, and analyst in team Trinova Tech; contributed across requirements, application logic, and delivery coordination.",
+    technologies: ["Java 17", "Swing", "SQL Server", "JDBC", "JUnit 5", "Maven"],
+    highlights: ["MVC + Service + DAO", "Role-based dashboards", "Password hashing", "PDF and spreadsheet export"],
+    github: "https://github.com/muhammad-haris2/Smart-Coworking-Space-Management-System",
+    featured: false,
+    visual: "desktop",
+    role: "Scrum Master · Developer · Analyst",
+    context: "University team project · Spring 2026",
+    architecture: ["Swing UI", "Service layer", "DAO", "SQL Server"],
+    challenges: ["Maintaining separation between UI, business rules, and persistence", "Coordinating booking costs with subscriptions and promo codes"],
+    outcomes: ["Separate member and admin experiences", "Database-backed booking and billing workflows", "JUnit coverage for application logic"],
+  },
+  {
+    id: "reading-comprehension",
+    number: "05",
+    title: "Reading Comprehension & Quiz Generation",
+    shortTitle: "An NLP pipeline for questions and plausible distractors",
+    description: "A machine-learning pipeline built on the RACE dataset for reading-comprehension classification, quiz construction, and distractor generation.",
+    problem: "Creating plausible reading-comprehension questions and distractors is labor-intensive and difficult to evaluate automatically.",
+    contribution: "Completed as a two-person course project with Mohammad Saeed. The public repository documents the shared system, but not a per-member implementation breakdown.",
+    technologies: ["Python", "scikit-learn", "XGBoost", "NLTK", "TF-IDF"],
+    highlights: ["RACE dataset", "Feature engineering", "XGBoost classifier", "Label Propagation"],
+    image: "/images/projects/reading-comprehension.jpg",
+    imageAlt: "Reading comprehension and quiz generation project overview",
+    github: "https://github.com/muhammad-haris2/race_rc_project",
+    featured: false,
+    visual: "nlp",
+    role: "Two-person university project",
+    context: "NLP / educational tools",
+    architecture: ["RACE data", "Features", "Classification", "Distractors"],
+    challenges: ["Creating distractors that are plausible without duplicating the answer", "Handling varied passage and question types"],
+    outcomes: ["Automated quiz-generation pipeline", "Semi-supervised experimentation with label propagation"],
+  },
+  {
+    id: "autocare-hub",
+    number: "06",
+    title: "AutoCare Hub",
+    shortTitle: "A full-stack Android marketplace for vehicle services",
+    description: "An Android application connecting vehicle owners and service providers through discovery, booking, repair tracking, chat, and notifications.",
+    problem: "Vehicle owners and workshops need one shared flow for service discovery, booking updates, and communication.",
+    contribution: "Built the Android client, PHP REST integration, data flows, booking states, chat, and push-notification behavior.",
+    technologies: ["Kotlin", "MVVM", "Retrofit", "PHP", "MySQL", "Firebase FCM"],
+    highlights: ["Customer + provider modules", "Booking status tracking", "In-app chat", "Push notifications"],
+    featured: false,
+    visual: "mobile",
+    role: "Android / full-stack developer",
+    context: "University mobile-development project",
+    architecture: ["Android UI", "MVVM", "PHP REST API", "MySQL"],
+    challenges: ["Synchronizing booking states across customer and provider views", "Handling API failures and image uploads on mobile"],
+    outcomes: ["End-to-end service booking flow", "Separate customer and provider experiences", "FCM notifications for booking and chat events"],
   },
 ];
