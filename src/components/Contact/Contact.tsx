@@ -1,284 +1,104 @@
-import { useState, type FormEvent } from "react";
-import { motion } from "framer-motion";
-import { Mail, Send, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
-import { GitHubIcon, LinkedInIcon } from "../ui/SocialIcons";
+import { useRef, useState, type FormEvent } from "react";
+import { AlertCircle, ArrowUpRight, CheckCircle2, LoaderCircle, Mail, Send } from "lucide-react";
 import { personal } from "../../data/personal";
-import { SectionHeading } from "../ui/SectionHeading";
-import { Button } from "../ui/Button";
-import { cn } from "../../lib/utils";
-
-interface FormData {
-  name: string;
-  email: string;
-  message: string;
-}
-
-interface FormErrors {
-  name?: string;
-  email?: string;
-  message?: string;
-}
-
-function validateForm(data: FormData): FormErrors {
-  const errors: FormErrors = {};
-
-  if (!data.name.trim()) {
-    errors.name = "Name is required";
-  } else if (data.name.trim().length < 2) {
-    errors.name = "Name must be at least 2 characters";
-  }
-
-  if (!data.email.trim()) {
-    errors.email = "Email is required";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-    errors.email = "Please enter a valid email address";
-  }
-
-  if (!data.message.trim()) {
-    errors.message = "Message is required";
-  } else if (data.message.trim().length < 10) {
-    errors.message = "Message must be at least 10 characters";
-  }
-
-  return errors;
-}
+import { GitHubIcon, LinkedInIcon } from "../ui/SocialIcons";
+import { createMailtoUrl, createWeb3FormsPayload, isConfirmedWeb3FormsResponse, validateContactForm, type ContactFormData, type ContactFormErrors, type Web3FormsResult } from "../../lib/contactForm";
 
 export function Contact() {
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    email: "",
-    message: "",
-  });
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
+  const [data, setData] = useState<ContactFormData>({ name: "", email: "", message: "" });
+  const [errors, setErrors] = useState<ContactFormErrors>({});
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "fallback" | "error">("idle");
+  const requestInFlight = useRef(false);
+  const key = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
 
-  const web3FormsKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+  const update = (field: keyof ContactFormData, value: string) => {
+    setData((current) => ({ ...current, [field]: value }));
+    setErrors((current) => ({ ...current, [field]: undefined }));
+    if (status !== "sending") setStatus("idle");
+  };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    const validationErrors = validateForm(formData);
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      setSubmitted(false);
-      setSubmitError("");
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (requestInFlight.current) return;
+    const nextErrors = validateContactForm(data);
+    if (Object.keys(nextErrors).length) {
+      setErrors(nextErrors);
+      setStatus("idle");
+      const first = Object.keys(nextErrors)[0];
+      document.getElementById(first)?.focus();
       return;
     }
 
-    setErrors({});
-    setSubmitError("");
-    setSubmitting(true);
-
+    requestInFlight.current = true;
+    setStatus("sending");
     try {
-      if (web3FormsKey) {
-        const response = await fetch("https://api.web3forms.com/submit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            access_key: web3FormsKey,
-            name: formData.name,
-            email: formData.email,
-            message: formData.message,
-            subject: `Portfolio contact from ${formData.name}`,
-          }),
-        });
-
-        const result = await response.json();
-        if (!result.success) {
-          throw new Error("Failed to send message");
-        }
-      } else {
-        const subject = encodeURIComponent(`Portfolio contact from ${formData.name}`);
-        const body = encodeURIComponent(
-          `Name: ${formData.name}\nEmail: ${formData.email}\n\n${formData.message}`,
-        );
-        window.location.href = `mailto:${personal.email}?subject=${subject}&body=${body}`;
+      if (!key) {
+        setStatus("fallback");
+        window.location.href = createMailtoUrl(personal.email, data);
+        return;
       }
 
-      setSubmitted(true);
-      setFormData({ name: "", email: "", message: "" });
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(createWeb3FormsPayload(key, data)),
+      });
+      const result = await response.json().catch(() => null) as Web3FormsResult | null;
+      if (!isConfirmedWeb3FormsResponse(response.ok, result)) throw new Error("Web3Forms did not confirm delivery");
+      setStatus("sent");
+      setData({ name: "", email: "", message: "" });
     } catch {
-      setSubmitError("Something went wrong. Please email me directly using the link on the left.");
+      setStatus("error");
     } finally {
-      setSubmitting(false);
+      requestInFlight.current = false;
     }
-  };
-
-  const handleChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
-    }
-    if (submitted) setSubmitted(false);
-    if (submitError) setSubmitError("");
   };
 
   return (
-    <section id="contact" className="py-24" aria-labelledby="contact-heading">
-      <div className="section-container">
-        <SectionHeading
-          label="Contact"
-          title="Let's Build Something Intelligent"
-          description="Interested in AI, automation, or building intelligent applications? Let's connect."
-          align="center"
-        />
-
-        <div className="mx-auto grid max-w-4xl gap-10 lg:grid-cols-5">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="lg:col-span-2"
-          >
-            <div className="space-y-4">
-              <a
-                href={personal.links.email}
-                className="glass flex items-center gap-3 rounded-xl p-4 transition-colors hover:border-accent/30"
-              >
-                <Mail className="h-5 w-5 text-accent" />
-                <div>
-                  <p className="text-xs text-text-muted">Email</p>
-                  <p className="text-sm text-text-primary">{personal.email}</p>
-                </div>
-              </a>
-              <a
-                href={personal.links.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="glass flex items-center gap-3 rounded-xl p-4 transition-colors hover:border-accent/30"
-              >
-                <LinkedInIcon className="h-5 w-5 text-accent" />
-                <div>
-                  <p className="text-xs text-text-muted">LinkedIn</p>
-                  <p className="text-sm text-text-primary">Connect on LinkedIn</p>
-                </div>
-              </a>
-              <a
-                href={personal.links.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="glass flex items-center gap-3 rounded-xl p-4 transition-colors hover:border-accent/30"
-              >
-                <GitHubIcon className="h-5 w-5 text-accent" />
-                <div>
-                  <p className="text-xs text-text-muted">GitHub</p>
-                  <p className="text-sm text-text-primary">View my repositories</p>
-                </div>
-              </a>
-            </div>
-          </motion.div>
-
-          <motion.form
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            onSubmit={handleSubmit}
-            className="glass space-y-4 rounded-2xl p-6 lg:col-span-3"
-            noValidate
-          >
-            <div>
-              <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-text-primary">
-                Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={formData.name}
-                onChange={(e) => handleChange("name", e.target.value)}
-                className={cn(
-                  "w-full rounded-lg border bg-white/[0.03] px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-accent focus:outline-none",
-                  errors.name ? "border-red-500/50" : "border-border",
-                )}
-                placeholder="Your name"
-                aria-invalid={!!errors.name}
-                aria-describedby={errors.name ? "name-error" : undefined}
-              />
-              {errors.name && (
-                <p id="name-error" className="mt-1 flex items-center gap-1 text-xs text-red-400">
-                  <AlertCircle className="h-3 w-3" /> {errors.name}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-text-primary">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleChange("email", e.target.value)}
-                className={cn(
-                  "w-full rounded-lg border bg-white/[0.03] px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-accent focus:outline-none",
-                  errors.email ? "border-red-500/50" : "border-border",
-                )}
-                placeholder="your@email.com"
-                aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? "email-error" : undefined}
-              />
-              {errors.email && (
-                <p id="email-error" className="mt-1 flex items-center gap-1 text-xs text-red-400">
-                  <AlertCircle className="h-3 w-3" /> {errors.email}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-text-primary">
-                Message
-              </label>
-              <textarea
-                id="message"
-                rows={4}
-                value={formData.message}
-                onChange={(e) => handleChange("message", e.target.value)}
-                className={cn(
-                  "w-full resize-none rounded-lg border bg-white/[0.03] px-4 py-2.5 text-sm text-text-primary placeholder:text-text-muted transition-colors focus:border-accent focus:outline-none",
-                  errors.message ? "border-red-500/50" : "border-border",
-                )}
-                placeholder="Tell me about your project or idea..."
-                aria-invalid={!!errors.message}
-                aria-describedby={errors.message ? "message-error" : undefined}
-              />
-              {errors.message && (
-                <p id="message-error" className="mt-1 flex items-center gap-1 text-xs text-red-400">
-                  <AlertCircle className="h-3 w-3" /> {errors.message}
-                </p>
-              )}
-            </div>
-
-            {submitted && (
-              <div className="flex items-center gap-2 rounded-lg bg-green-500/10 px-4 py-3 text-sm text-green-400">
-                <CheckCircle className="h-4 w-4 shrink-0" />
-                {web3FormsKey
-                  ? "Message sent successfully! I'll get back to you soon."
-                  : "Opening your email client to send the message."}
-              </div>
-            )}
-
-            {submitError && (
-              <div className="flex items-center gap-2 rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-400">
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                {submitError}
-              </div>
-            )}
-
-            <Button type="submit" className="w-full sm:w-auto" disabled={submitting}>
-              {submitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> Sending...
-                </>
-              ) : (
-                <>
-                  <Send className="h-4 w-4" /> Send Message
-                </>
-              )}
-            </Button>
-          </motion.form>
+    <section id="contact" className="contact-section" aria-labelledby="contact-heading">
+      <div className="page-shell contact-grid">
+        <div className="contact-copy">
+          <p className="kicker">Contact / Opportunities</p>
+          <h2 id="contact-heading">Let’s build something useful.</h2>
+          <p>I’m interested in AI/ML internships, Python backend and software engineering roles, research collaborations, and thoughtful freelance work.</p>
+          <a className="email-link" href={personal.links.email}>{personal.email} <ArrowUpRight aria-hidden="true" /></a>
+          <div className="contact-socials">
+            <a href={personal.links.github} target="_blank" rel="noopener noreferrer"><GitHubIcon /> GitHub</a>
+            <a href={personal.links.linkedin} target="_blank" rel="noopener noreferrer"><LinkedInIcon /> LinkedIn</a>
+          </div>
+          <div className="availability"><span aria-hidden="true" /> Open to relevant opportunities</div>
         </div>
+
+        <form className="contact-form" onSubmit={handleSubmit} noValidate>
+          <div className="field-row">
+            <div className="field">
+              <label htmlFor="name">Name</label>
+              <input id="name" name="name" autoComplete="name" value={data.name} onChange={(event) => update("name", event.target.value)} aria-invalid={Boolean(errors.name)} aria-describedby={errors.name ? "name-error" : undefined} placeholder="Your name" />
+              {errors.name && <p id="name-error" className="field-error"><AlertCircle aria-hidden="true" />{errors.name}</p>}
+            </div>
+            <div className="field">
+              <label htmlFor="email">Email</label>
+              <input id="email" name="email" type="email" autoComplete="email" value={data.email} onChange={(event) => update("email", event.target.value)} aria-invalid={Boolean(errors.email)} aria-describedby={errors.email ? "email-error" : undefined} placeholder="you@example.com" />
+              {errors.email && <p id="email-error" className="field-error"><AlertCircle aria-hidden="true" />{errors.email}</p>}
+            </div>
+          </div>
+          <div className="field">
+            <label htmlFor="message">Message</label>
+            <textarea id="message" name="message" rows={6} value={data.message} onChange={(event) => update("message", event.target.value)} aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? "message-error" : undefined} placeholder="Tell me about the role, project, or idea." />
+            {errors.message && <p id="message-error" className="field-error"><AlertCircle aria-hidden="true" />{errors.message}</p>}
+          </div>
+          <div className="form-footer">
+            <button className="send-button" type="submit" disabled={status === "sending"}>
+              {status === "sending" ? <><LoaderCircle className="spin" aria-hidden="true" /> Sending…</> : <>Send message <Send aria-hidden="true" /></>}
+            </button>
+            <p>Or email me directly if you prefer.</p>
+          </div>
+          <div className="form-status" aria-live="polite" aria-atomic="true">
+            {status === "sent" && <p className="status-success"><CheckCircle2 aria-hidden="true" />Message confirmed by Web3Forms. I’ll reply as soon as I can.</p>}
+            {status === "fallback" && <p className="status-info"><Mail aria-hidden="true" />Web3Forms is not configured here, so your email app is opening with the message prepared.</p>}
+            {status === "error" && <p className="status-error"><AlertCircle aria-hidden="true" />The message was not confirmed. Please email <a href={personal.links.email}>{personal.email}</a> directly.</p>}
+          </div>
+        </form>
       </div>
     </section>
   );

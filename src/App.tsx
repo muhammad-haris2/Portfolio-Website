@@ -1,30 +1,23 @@
 import { Navbar } from "./components/Navbar/Navbar";
 import { Hero } from "./components/Hero/Hero";
-import { About } from "./components/About/About";
-import { Skills } from "./components/Skills/Skills";
 import { Projects } from "./components/Projects/Projects";
-import { Architecture } from "./components/Architecture/Architecture";
-import { Journey } from "./components/Journey/Journey";
-import { Education } from "./components/Education/Education";
-import { GitHubSection } from "./components/GitHub/GitHubSection";
+import { About } from "./components/About/About";
+import { Experience } from "./components/Experience/Experience";
+import { Skills } from "./components/Skills/Skills";
 import { Contact } from "./components/Contact/Contact";
 import { Footer } from "./components/Footer/Footer";
-import { Background } from "./components/Background/Background";
 
 function App() {
   return (
     <>
-      <Background />
+      <a className="skip-link" href="#main-content">Skip to content</a>
       <Navbar />
-      <main>
+      <main id="main-content">
         <Hero />
-        <About />
-        <Skills />
         <Projects />
-        <Architecture />
-        <Journey />
-        <Education />
-        <GitHubSection />
+        <About />
+        <Experience />
+        <Skills />
         <Contact />
       </main>
       <Footer />

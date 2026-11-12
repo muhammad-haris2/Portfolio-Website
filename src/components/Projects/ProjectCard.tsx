@@ -1,121 +1,32 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight, ExternalLink } from "lucide-react";
-import { GitHubIcon } from "../ui/SocialIcons";
+import { ArrowRight, ArrowUpRight, ExternalLink } from "lucide-react";
 import type { Project } from "../../data/projects";
-import { OptimizedImage } from "../ui/OptimizedImage";
-import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { GitHubIcon } from "../ui/SocialIcons";
+import { ProjectVisual } from "./ProjectVisual";
 
-interface ProjectCardProps {
-  project: Project;
-  index: number;
-  onOpen: (project: Project) => void;
-}
-
-export function ProjectCard({ project, index, onOpen }: ProjectCardProps) {
+export function ProjectCard({ project, index, onOpen }: { project: Project; index: number; onOpen: (project: Project) => void }) {
   return (
     <motion.article
-      initial={{ opacity: 0, y: 30 }}
+      className={`case-study case-study--${index % 2 ? "reverse" : "forward"}`}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group glass cursor-pointer overflow-hidden rounded-2xl transition-all duration-300 hover:border-accent/30 hover:shadow-xl hover:shadow-accent-glow"
-      onClick={() => onOpen(project)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onOpen(project);
-        }
-      }}
-      tabIndex={0}
-      role="button"
-      aria-label={`View details for ${project.title}`}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.5 }}
     >
-      <div className="overflow-hidden">
-        <motion.div
-          whileHover={{ scale: 1.03 }}
-          transition={{ duration: 0.4 }}
-        >
-          <OptimizedImage
-            src={project.image}
-            alt={`Screenshot of ${project.title}`}
-            aspectRatio="video"
-          />
-        </motion.div>
-      </div>
-
-      <div className="p-6">
-        <div className="mb-3 flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            {project.category && (
-              <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-muted">
-                {project.category}
-              </p>
-            )}
-            <h3 className="text-xl font-semibold text-text-primary transition-colors group-hover:text-accent-light">
-              {project.title}
-            </h3>
-            {project.role && (
-              <p className="mt-1 text-xs text-accent">{project.role}</p>
-            )}
-          </div>
-          <ArrowUpRight className="h-5 w-5 shrink-0 text-text-muted transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent-light" />
+      <div className="case-visual"><ProjectVisual project={project} /></div>
+      <div className="case-copy">
+        <div className="case-index"><span>Case study / {project.number}</span><span>{project.context}</span></div>
+        <h3>{project.title}</h3>
+        <p className="case-deck">{project.shortTitle}</p>
+        <p className="case-description">{project.description}</p>
+        <div className="case-highlights">
+          {project.highlights.map((highlight) => <span key={highlight}>{highlight}</span>)}
         </div>
-
-        <p className="mb-4 text-sm leading-relaxed text-text-secondary">
-          {project.description}
-        </p>
-
-        <ul className="mb-4 space-y-1">
-          {project.highlights.slice(0, 4).map((highlight) => (
-            <li
-              key={highlight}
-              className="flex items-start gap-2 text-xs text-text-secondary"
-            >
-              <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
-              {highlight}
-            </li>
-          ))}
-        </ul>
-
-        <div className="mb-5 flex flex-wrap gap-2">
-          {project.technologies.map((tech, i) => (
-            <Badge key={tech} index={i}>
-              {tech}
-            </Badge>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap gap-2" onClick={(e) => e.stopPropagation()}>
-          <Button
-            variant="ghost"
-            className="text-xs px-3 py-1.5"
-            onClick={() => onOpen(project)}
-          >
-            View Details
-          </Button>
-          {project.github && (
-            <Button
-              variant="outline"
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs px-3 py-1.5"
-            >
-              <GitHubIcon className="h-3.5 w-3.5" /> GitHub
-            </Button>
-          )}
-          {project.liveDemo && (
-            <Button
-              variant="ghost"
-              href={project.liveDemo}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs px-3 py-1.5"
-            >
-              <ExternalLink className="h-3.5 w-3.5" /> Live Demo
-            </Button>
-          )}
+        <div className="case-actions">
+          <Button variant="dark" onClick={() => onOpen(project)}>Read case study <ArrowRight size={16} aria-hidden="true" /></Button>
+          <a href={project.github} target="_blank" rel="noopener noreferrer"><GitHubIcon /> Code <ArrowUpRight size={13} aria-hidden="true" /></a>
+          {project.liveDemo && <a href={project.liveDemo} target="_blank" rel="noopener noreferrer"><ExternalLink size={15} aria-hidden="true" /> Live</a>}
         </div>
       </div>
     </motion.article>

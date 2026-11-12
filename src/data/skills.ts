@@ -1,72 +1,39 @@
 export interface SkillCategory {
+  index: string;
   title: string;
-  icon: string;
+  description: string;
   skills: string[];
 }
 
 export const skillCategories: SkillCategory[] = [
   {
-    title: "AI / Generative AI",
-    icon: "brain",
-    skills: [
-      "LLMs",
-      "RAG",
-      "Agentic AI",
-      "LangChain",
-      "LangGraph",
-      "CrewAI",
-      "Prompt Engineering",
-      "LLM Integration",
-      "Groq",
-    ],
+    index: "01",
+    title: "AI & machine learning",
+    description: "From data preparation and classical ML to grounded language-model applications.",
+    skills: ["Python", "scikit-learn", "Machine learning", "NLP", "RAG"],
   },
   {
-    title: "Machine Learning",
-    icon: "chart",
-    skills: [
-      "Scikit-learn",
-      "XGBoost",
-      "Gradient Boosting",
-      "Random Forest",
-      "KMeans",
-      "GMM",
-      "Label Propagation",
-    ],
+    index: "02",
+    title: "LLM & agent engineering",
+    description: "Orchestrated systems with retrieval, tools, structured outputs, and validation steps.",
+    skills: ["LangChain", "LangGraph", "CrewAI", "Groq", "Retrieval pipelines"],
   },
   {
-    title: "NLP",
-    icon: "text",
-    skills: [
-      "TF-IDF",
-      "Bag of Words",
-      "One-Hot Encoding",
-      "BLEU",
-      "ROUGE",
-      "METEOR",
-      "Cosine Similarity",
-    ],
+    index: "03",
+    title: "Backend & APIs",
+    description: "Typed service boundaries and practical web APIs for AI and data products.",
+    skills: ["FastAPI", "Flask", "REST APIs", "Pydantic", "PHP"],
   },
   {
-    title: "Backend",
-    icon: "server",
-    skills: ["Python", "FastAPI", "REST APIs", "Pydantic", "PHP"],
+    index: "04",
+    title: "Data & persistence",
+    description: "Relational data, vector stores, and preprocessing pipelines built around the use case.",
+    skills: ["SQL", "MySQL", "SQL Server", "Chroma", "FAISS"],
   },
   {
-    title: "Databases / Infrastructure",
-    icon: "database",
-    skills: [
-      "Chroma",
-      "FAISS",
-      "SQL",
-      "MySQL",
-      "SQLite",
-      "Docker",
-      "Git / GitHub",
-    ],
-  },
-  {
-    title: "Frontend / Tools",
-    icon: "code",
-    skills: ["React", "JavaScript", "TypeScript", "Streamlit", "Postman", "VS Code", "Git"],
+    index: "05",
+    title: "Software development",
+    description: "The engineering tools used to turn experiments into maintainable applications.",
+    skills: ["Git", "Docker", "Testing", "Java", "C++", "TypeScript", "React"],
   },
 ];
